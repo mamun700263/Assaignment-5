@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}{{book.name}}{% endblock title %}
+
+
+{% block content %}
+<h5 class="card-title text-center col-lg-12 my-5"><b>{{book.name}}</b> </h5>
+<div class='col-lg-12 d-flex '>
+
+    <div class="photo-detail" style="width: 50%; display: flex; justify-content: center; align-items: center;">
+        <img src="{{book.image}}" alt="{{book.name}}" style="width: 100%; height: auto; max-width: 400px; max-height: 400px; object-fit: contain;">
+    </div>
+    
+
+<div class="detail_info m-5 d-flex flex-wrap " style='width: 50%;'>
+
+        <div class="card-body">
+            <h5 class="card-title"><b>Categories :</b>
+                    <ul class ='d-flex'>
+                        {% for category in book.categories.all %}
+                        <ul>{{ category.name }}</ul>
+                        {% endfor %}
+                    </ul>
+                </h5>
+                
+            <h5 class="card-title"><b>Author :</b> {{book.author}}</h5>
+            <p class="card-text"><b>Description :</b>{{book.description}} </p>
+            <p class="card-text"><b>Cost :</b>{{book.price}}$  </p>
+        </div>
+        <div class='mt-auto col-lg-12'>
+            {% if user.is_authenticated %}
+
+            {% if have %}
+            <h3>You already have this book <a href="{% url 'profile' %}" class='btn btn-primary'>Read Now</a></h3>
+            
+            {% else %}
+            <form method="post" action="{% url 'borrow' book.id %}">
+                {% csrf_token %}
+                {{ buy_form| crispy }}
+                <button type="submit" name="buy_form" class='btn btn-warning'>Borrow Now</button>
+            </form>
+            {% endif %}
+            {% else %}
+            <a href="{% url 'login' %}" class='btn btn-success w-100'>Log in to borrow for {{total_price}} $</a>
+            {% endif %}
+            
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<h1  class="bg-dark text-white my-5 text-center" id='reviews'>Reviews</h1>
+{% if read is True  %}
+    <form action="" method="post" class='w-50'>
+        {% csrf_token %}
+        hell
+        {{ comment_form.as_table}}
+        <input type="submit" value="Add comment">
+    </form>
+{% endif %}
+
+
+
+<div class = 'justify-content-center'> 
+{% for comment in comments %}
+<div class="card m-3 ">
+    <div class="card-header">
+        <p class="card-title"><b>{{comment.account}}</b></p>
+        
+        <p class="card-title"><b>{{comment.text}}</b></p>
+        <small class="card-text">{{comment.time }}</small>
+    </div>
+    <div class="card-body">
+        <p class="card-title"><b>{{comment.rating}}*</b></p>
+        <p class="card-text">{{comment.message}}</p>
+
+        <br>
+        {% comment %} <small class="card-text">{{comment.time | date:'H:m'}}</small> {% endcomment %}
+    </div>
+</div>
+
+{% endfor %}
+</div>
+
+
+{% endblock content %}

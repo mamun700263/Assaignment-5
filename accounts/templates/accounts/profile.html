@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+
+{% block title %}Profile{% endblock title %}
+
+{% block content %}
+<h1>{{user.username}} </h1>
+
+
+<table class="table m-auto border"  style='width: 75%;'>
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Book</th>
+        <th scope="col">time</th>
+        <th scope="col">Cost</th>
+        <th scope="col">Balance while Borrowing</th>
+        <th scope="col">Situataion</th>
+      </tr>
+    </thead>
+    <tbody>
+
+        {% for t in transactions %}
+        <tr>
+            <th scope="row">{{ t.id }}</th>
+            <td>{{ t.book.name }}</td>
+            <td>{{ t.time }}</td>
+            <td>{{ t.book.price }}$</td>
+            <td>{{ t.balance_then }}$</td>
+            {{have_now}}
+            {% if  t.have_now %}
+            <td>
+              <form action="{% url 'return' t.book.id%}" method="post">
+                {% csrf_token %}
+              <button class='btn btn-warning' type='submit'>Return Now</button>
+            </form>
+            </td>
+
+            {% else %}
+            <td><button class='btn btn-success'>Returned</button></td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+        
+
+    </tbody>
+  </table>
+{% endblock content %}

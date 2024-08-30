@@ -1,90 +1,82 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
-{% block title %}{{book.name}}{% endblock title %}
-
+{% block title %}{{ book.name }}{% endblock title %}
 
 {% block content %}
-<h5 class="card-title text-center col-lg-12 my-5"><b>{{book.name}}</b> </h5>
-<div class='col-lg-12 d-flex '>
+<div class="container my-5">
+    <!-- Book Header -->
+    <h1 class="text-center mb-4">{{ book.name }}</h1>
 
-    <div class="photo-detail" style="width: 50%; display: flex; justify-content: center; align-items: center;">
-        <img src="{{book.image}}" alt="{{book.name}}" style="width: 100%; height: auto; max-width: 400px; max-height: 400px; object-fit: contain;">
-    </div>
-    
+    <div class="row">
+        <!-- Book Image -->
+        <div class="col-lg-6 d-flex justify-content-center">
+            <img src="{{ book.image }}" alt="{{ book.name }}" class="img-fluid rounded shadow" style="max-width: 400px; object-fit: contain;">
+        </div>
 
-<div class="detail_info m-5 d-flex flex-wrap " style='width: 50%;'>
-
-        <div class="card-body">
-            <h5 class="card-title"><b>Categories :</b>
-                    <ul class ='d-flex'>
+        <!-- Book Details -->
+        <div class="col-lg-6">
+            <div class="card border-light mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-3"><strong>Categories:</strong></h5>
+                    <div class="mb-3">
                         {% for category in book.categories.all %}
-                        <ul>{{ category.name }}</ul>
+                        <span class="badge bg-primary me-2">{{ category.name }}</span>
                         {% endfor %}
-                    </ul>
-                </h5>
-                
-            <h5 class="card-title"><b>Author :</b> {{book.author}}</h5>
-            <p class="card-text"><b>Description :</b>{{book.description}} </p>
-            <p class="card-text"><b>Cost :</b>{{book.price}}$  </p>
-        </div>
-        <div class='mt-auto col-lg-12'>
-            {% if user.is_authenticated %}
+                    </div>
 
-            {% if have %}
-            <h3>You already have this book <a href="{% url 'profile' %}" class='btn btn-primary'>Read Now</a></h3>
-            
-            {% else %}
-            <form method="post" action="{% url 'borrow' book.id %}">
+                    <h5 class="card-title mb-3"><strong>Author:</strong> {{ book.author }}</h5>
+                    <p class="card-text"><strong>Description:</strong> {{ book.description }}</p>
+                    <p class="card-text"><strong>Cost:</strong> ${{ book.price }}</p>
+
+                    <!-- Borrow Button -->
+                    <div class="mt-4">
+                        {% if user.is_authenticated %}
+                            {% if have %}
+                                <h3 class="text-success">You already have this book. <a href="{% url 'profile' %}" class="btn btn-primary">Read Now</a></h3>
+                            {% else %}
+                                <form method="post" action="{% url 'borrow' book.id %}">
+                                    {% csrf_token %}
+                                    {{ buy_form|crispy }}
+                                    <button type="submit" name="buy_form" class="btn btn-warning">Borrow Now</button>
+                                </form>
+                            {% endif %}
+                        {% else %}
+                            <a href="{% url 'login' %}" class="btn btn-success w-100">Log in to borrow for ${{ total_price }}</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="my-5">
+        <h2 class="bg-dark text-white py-3 text-center rounded">Reviews</h2>
+        {% if read %}
+            <form action="" method="post" class="w-75 mx-auto mb-4 p-4 border rounded bg-light shadow">
                 {% csrf_token %}
-                {{ buy_form| crispy }}
-                <button type="submit" name="buy_form" class='btn btn-warning'>Borrow Now</button>
+                {{ comment_form|crispy }}
+                <button type="submit" class="btn btn-primary">Add Comment</button>
             </form>
-            {% endif %}
-            {% else %}
-            <a href="{% url 'login' %}" class='btn btn-success w-100'>Log in to borrow for {{total_price}} $</a>
-            {% endif %}
-            
+        {% endif %}
+
+        <!-- Display Reviews -->
+        <div class="row">
+            {% for comment in comments %}
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">{{ comment.account }}</h5>
+                        <small class="text-muted">{{ comment.time }}</small>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">{{ comment.text }}</p>
+                        <p class="card-text"><strong>Rating:</strong> {{ comment.rating }} ★</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
         </div>
     </div>
 </div>
-
-
-
-
-
-
-<h1  class="bg-dark text-white my-5 text-center" id='reviews'>Reviews</h1>
-{% if read is True  %}
-    <form action="" method="post" class='w-50'>
-        {% csrf_token %}
-        hell
-        {{ comment_form.as_table}}
-        <input type="submit" value="Add comment">
-    </form>
-{% endif %}
-
-
-
-<div class = 'justify-content-center'> 
-{% for comment in comments %}
-<div class="card m-3 ">
-    <div class="card-header">
-        <p class="card-title"><b>{{comment.account}}</b></p>
-        
-        <p class="card-title"><b>{{comment.text}}</b></p>
-        <small class="card-text">{{comment.time }}</small>
-    </div>
-    <div class="card-body">
-        <p class="card-title"><b>{{comment.rating}}*</b></p>
-        <p class="card-text">{{comment.message}}</p>
-
-        <br>
-        {% comment %} <small class="card-text">{{comment.time | date:'H:m'}}</small> {% endcomment %}
-    </div>
-</div>
-
-{% endfor %}
-</div>
-
-
 {% endblock content %}

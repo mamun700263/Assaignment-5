@@ -1,69 +1,67 @@
 {% extends "base.html" %}
 
-
 {% block title %}Home{% endblock title %}
 
 {% block content %}
-<div class="m-3">
-
-<div style='height: 150px; background-color: bisque; display: flex; justify-content: center; align-items: center;'
-    class='my-4'>
-    <h2 class="text-center">{{quote}}</h2>
-</div>
-
-<div class="border d-flex flex-wrap" style="background-color: rgb(250, 245, 237);">
-
-<div style="width: 15%;  ">
-    <h3 class='bg-success text-white ' style='height:50px;'>Sort by Category</h3>
-    {% for cat in category %}
-    <a class="btn btn-outline-success btn-sm  justify-content-around m-1 " href="{% url 'home2' cat=cat.id %}" type='submit'>
-        {{cat.name }}</a>
-    {% endfor %}
-</div>
-
-
-<div class="d-flex flex-wrap border " style="width: 85%; background-color: rgb(192, 176, 176);">
-    
-<div class="w-100 border " style="height: 50px;">
-    {% if search > 0 %}
-
-    <h3 class="text-center bg-success text-white ">
-        <b>{{ search }}</b> books found in the <b>{{ searched_category }}</b> category
-    </h3>
-
-    {% elif search == 0 %}
-
-    <h3 class="text-center bg-danger text-white">
-        NO books found
-    </h3>
-
-    {% endif %}
-</div>
-
-
-    <div class="container ">
-        <div class="row">
-            {% for book in books %}
-            <div class="col-md-3 mb-4">
-                <div class="card" style="height: 100%;">
-                    <img src="{{book.image}}" class="card-img-top" alt="{{ book.name }}" style="height: 200px; object-fit: cover;">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">{{ book.name }}</h5>
-                    <p class="card-text">{{ book.description|slice:":50" }}{% if book.description|length > 50 %}...{% endif %}</p>
-
-                        <ul class="list-unstyled">
-                            {% for category in book.categories.all %}
-                            <li class="badge bg-primary text-white me-1">{{ category.name }}</li>
-                            {% endfor %}
-                        </ul>
-                        <a href="{% url 'detail' book.id %}" class="btn btn-primary mt-auto">Details</a>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
+<div class="container my-5">
+    <!-- Quote Section -->
+    <div class="row justify-content-center align-items-center my-5 py-5" style="background-color: #eaf2f8; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border-radius: 8px;">
+        <h2 class="text-center text-dark">{{ quote }}</h2>
     </div>
     
-</div>
+    <div class="row">
+        <!-- Sidebar: Categories -->
+        <div class="col-lg-3 mb-4">
+            <div class="card shadow-sm border-0" style="background-color: #ffffff; border: 1px solid #e0e0e0;">
+                <div class="card-header text-center" style="background-color: #28a745; color: #ffffff;">
+                    <h5 class="mb-0">Sort by Category</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for cat in category %}
+                    <a href="{% url 'home2' cat=cat.id %}" class="list-group-item list-group-item-action" style="border-bottom: 1px solid #e0e0e0;">
+                        {{ cat.name }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Books Display Section -->
+        <div class="col-lg-9">
+            <!-- Search Results Message -->
+            {% if search > 0 %}
+                <div class="alert alert-success text-center mb-4 shadow-sm" role="alert">
+                    <strong>{{ search }}</strong> books found in the <strong>{{ searched_category }}</strong> category
+                </div>
+            {% elif search == 0 %}
+                <div class="alert alert-danger text-center mb-4 shadow-sm" role="alert">
+                    NO books found
+                </div>
+            {% endif %}
+            
+            <!-- Book Cards -->
+            <div class="row">
+                {% for book in books %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm border-0" style="background-color: #ffffff; border: 1px solid #e0e0e0;">
+                        <img src="{{ book.image }}" class="card-img-top rounded-top" alt="{{ book.name }}" style="height: 200px; object-fit: cover;">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title text-dark">{{ book.name }}</h5>
+                            <p class="card-text text-muted">{{ book.description|slice:":50" }}{% if book.description|length > 50 %}...{% endif %}</p>
+                            <div class="mt-auto">
+                                <div class="mb-2">
+                                    {% for category in book.categories.all %}
+                                    <span class="badge bg-success text-light">{{ category.name }}</span>
+                                    {% endfor %}
+                                </div>
+                                <a href="{% url 'detail' book.id %}" class="btn btn-outline-success btn-block">Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock content %}

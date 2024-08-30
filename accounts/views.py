@@ -28,7 +28,7 @@ class RegistrationView(FormView):
     def form_valid(self, form):
         user = form.save()
         login(self.request, user)
-        mail_subject = "Deposit Message"
+        mail_subject = "Registration Successful!!"
         message = render_to_string('accounts/registration_mail.html', {
             'user': self.request.user
         })

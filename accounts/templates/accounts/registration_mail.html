@@ -1,19 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Deposit Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 90%;
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #007bff;
+            font-size: 24px;
+            margin-top: 0;
+        }
+        p {
+            line-height: 1.6;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
 </head>
-<body>
 
-    <p>Dear {{ user.first_name }} {{ user.last_name }},</p>
-    <p>Thank you for creating an account in our library.</p>
-    <p>Here is your account information:</p>
-    <p>First name: {{ user.first_name }}</p>
-    <p>Last name: {{ user.last_name }}</p>
-    <p>Email: {{ user.email }}</p>
-    <p>Initial Balance: {{ user.account.balance }}</p>
-    <p>Best regards,<br>Library</p>
+<body>
+    <div class="container">
+        <h1>Registration Successful</h1>
+        <p>Dear {{ user.first_name }} {{ user.last_name }},</p>
+        <p>Thank you for creating an account with our library.</p>
+        <p>Here is your account information:</p>
+        <ul>
+            <li><strong>First name:</strong> {{ user.first_name }}</li>
+            <li><strong>Last name:</strong> {{ user.last_name }}</li>
+            <li><strong>Email:</strong> {{ user.email }}</li>
+            <li><strong>Initial Balance:</strong> ${{ user.account.balance }}</li>
+        </ul>
+        <p class="footer">Best regards,<br>Library Team</p>
+    </div>
 </body>
+
 </html>
